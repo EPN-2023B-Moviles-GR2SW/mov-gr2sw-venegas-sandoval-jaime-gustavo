@@ -67,6 +67,33 @@ abstract class NumerosJava{
     }
 }
 
+abstract class Numeros( //Constructor PRIMARIO
+    //Ejemplo:
+    // uno:Int, (Parametro (sin modificador de acceso))
+    // private var uno: Int, //Propiedad publica Clase numeros.uno
+    // var uno: Int, //Propiedad de la clase (por defecto es PUBLIC)
+    // public var uno: Int,
+    protected val numeroUno: Int, // Propiedad de la clase protected numeros.numeroUno
+    protected val numeroDos: Int, // propedad de la clase protected numeros.numeroDos
+){
+    // var cedula: string = "" (public por defecto)
+    // private valorCalculado: Int = 0 (private)
+    init{//bloque constructor primario
+        this.numeroUno; this.numeroUno; //this es opcional
+        numeroUno; numeroDos; //sin el "this" es lo mismo
+        println("inicializando")
+    }
+}
+
+class Suma( //Constructor primario suma
+    unoParametro: Int, // Parametro
+    dosParametro: Int, // Parametro
+): Numeros(unoParametro, dosParametro){//Extendiendo y mandando los parametros (super)
+    init{
+        this.numeroUno
+        this.numeroDos
+    }
+}
 
 fun calcularSueldo(
     sueldo: Double, //requerido
