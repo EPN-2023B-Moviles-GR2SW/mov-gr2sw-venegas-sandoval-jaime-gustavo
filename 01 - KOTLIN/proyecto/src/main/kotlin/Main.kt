@@ -46,6 +46,10 @@ fun main() {
     calcularSueldo(10.00, 15.00, 20.00)
     calcularSueldo(10.00, bonoEspecial = 20.00)
     calcularSueldo(bonoEspecial = 20.00, sueldo = 10.00, tasa = 14.00 )
+
+    val sumaUno = Suma(1, 1)
+    val sumaDos = Suma(null, 1)
+    val sumaTres = Suma(1, null)
 }
 
 fun imprimirNombre(nombre: String): Unit{
@@ -93,6 +97,22 @@ class Suma( //Constructor primario suma
         this.numeroUno
         this.numeroDos
     }
+
+    constructor( //segundo constructor
+        uno: Int?, //parametros
+        dos: Int //parametros
+    ):this(
+        if(uno == null) 0 else uno,
+        dos
+    )
+
+    constructor( //tercer constructor
+        uno: Int, //parametros
+        dos: Int? //parametros
+    ):this(
+        uno,
+        if(dos == null) 0 else dos,
+    )
 }
 
 fun calcularSueldo(
