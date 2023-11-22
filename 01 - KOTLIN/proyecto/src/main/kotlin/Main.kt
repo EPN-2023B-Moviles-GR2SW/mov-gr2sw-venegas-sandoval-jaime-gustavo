@@ -113,6 +113,42 @@ fun main() {
 
     println(respuestaFilter)
     println(respuestaFilterDos)
+
+    // OR y AND
+    // OR -> ANY (Alguno cumple?)
+    // AND -> ALL (Todos cumplen?)
+
+    val respuestaAny: Boolean = arregloDinamico
+        .any{valorActual: Int ->
+            return@any (valorActual > 5)
+        }
+    println(respuestaAny) //true
+
+    val respuestaAll: Boolean = arregloDinamico
+        .all{valorActual: Int ->
+            return@all (valorActual > 5)
+        }
+    println(respuestaAll) //false
+
+    //reduce -> valor acumulado
+    //Valor acumulado = 0 (en Kotlin)
+    //[1,2,3,4,5] -> sumeme todos los valores del arreglo
+    //valorIteracion 1 = valorEmpieza + 1 = 0 + 1 = 1 -> Iteracion1
+    //valorIteracion 2 = valorIteracion1 + 2 = 1 + 2 = 3 -> Iteracion2
+    //valorIteracion 3 = valorIteracion2 + 3 = 3 + 3 = 6 -> Iteracion3
+    //valorIteracion 4 = valorIteracion3 + 4 = 6 + 4 = 10 -> Iteracion4
+    //valorIteracion 5 = valorIteracion4 + 5 = 10 + 5 = 15 -> Iteracion5
+
+    val respuestaReduce: Int = arregloDinamico
+        .reduce{//acumulado = 0 -> siempre empieza en 0
+            acumulado: Int, valorActual: Int ->
+            return@reduce (acumulado + valorActual) //logica del negocio
+        }
+
+    println(respuestaReduce) //78
+
+    //acumulado + (itemCarrito.cantidad * itemCarrito.precio)
+
 }
 
 fun imprimirNombre(nombre: String): Unit{
