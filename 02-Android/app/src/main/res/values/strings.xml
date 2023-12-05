@@ -2,4 +2,6 @@
     <string name="app_name">B2023gr2sw</string>
     <string name="title_activity_aresources">AResources</string>
     <string name="saludo">Buenos días</string>
+    <color name="color_text">#FFBB86FC</color>
+    <color name="backgorund">#FFFFFF</color>
 </resources>

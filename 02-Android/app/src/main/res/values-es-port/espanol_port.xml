@@ -1,3 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="saludo">Port Español</string>
+    <color name="color_text">#170CA5</color>
+    <color name="backgorund">#FF7CE7</color>
 </resources>

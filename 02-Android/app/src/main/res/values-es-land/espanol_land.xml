@@ -1,3 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="saludo">Land Español</string>
+    <color name="color_text">#D93B88</color>
+    <color name="backgorund">#F4F963</color>
 </resources>

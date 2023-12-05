@@ -1,3 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="saludo">Land Inglés</string>
+    <color name="color_text">#3BD942</color>
+    <color name="backgorund">#767571</color>
 </resources>
