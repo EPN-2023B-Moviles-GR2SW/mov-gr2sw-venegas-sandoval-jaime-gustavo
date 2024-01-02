@@ -202,9 +202,15 @@ fun crearTienda():Tienda{
   println("Ingresa el dirección de la Tienda: ")
   val direccion = readLine() ?: ""
   println("Estado de la tienda abierto o cerrado: ")
-  val estado = readLine() ?.toBoolean()?: false
+  val estado = readLine() ?: ""
+  var condicion : Boolean = false
+  if(estado == "abierto"){
+    condicion = true;
+  }else if (estado == "cerrado"){
+    condicion = false;
+  }
 
-  val tienda = Tienda(ruc, nombre, telefono, direccion, estado)
+  val tienda = Tienda(ruc, nombre, telefono, direccion, condicion)
   Archivos.guardarTiendas(Archivos.leerTiendas() + tienda)
   return tienda
 }
