@@ -22,7 +22,7 @@ class ESqliteHelperEntrenador(
         descripcion VARCHAR(50)
         )
       """.trimIndent()
-    db.execSQL(scriptSQLCrearTablaEntrenador)
+    db?.execSQL(scriptSQLCrearTablaEntrenador)
   }
 
   override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) { }
@@ -78,5 +78,39 @@ class ESqliteHelperEntrenador(
       )
     conexionEscritura.close()
     return if(resultadoActualizacion.toInt() == -1) false else true
+  }
+
+  fun consultarEntrenadorPorID(id: Int): BEntrenador{
+    val baseDatosLectura = readableDatabase
+    val scrpitConsultaLectura = """
+    SELECT * FROM ENTRENADOR WHERE ID = ?
+    """.trimIndent()
+    val parametrosConsultaLectura = arrayOf(id.toString())
+    val resultadoConsultaLectura = baseDatosLectura.rawQuery(
+      scrpitConsultaLectura, //Consulta
+      parametrosConsultaLectura, //Parametros
+    )
+
+    //logica busqueda
+    val existeUsuario = resultadoConsultaLectura.moveToFirst()
+    val usuarioEncontrado = BEntrenador(0,"","")
+    //se puede almacenar un arreglo
+    // val arreglo = arrayListOf<BEntrenador>()
+    if(existeUsuario){
+      do {
+        val id = resultadoConsultaLectura.getInt(0) //indice 0
+        val nombre = resultadoConsultaLectura.getString(1)
+        val descripcion = resultadoConsultaLectura.getString(2)
+        if(id != null){
+          //llenar el arreglo con un nuevo BEntrenador
+          usuarioEncontrado.id = id
+          usuarioEncontrado.nombre = nombre
+          usuarioEncontrado.descripcion = descripcion
+        }
+      }while (resultadoConsultaLectura.moveToNext())
+    }
+    resultadoConsultaLectura.close()
+    baseDatosLectura.close()
+    return usuarioEncontrado
   }
 }
