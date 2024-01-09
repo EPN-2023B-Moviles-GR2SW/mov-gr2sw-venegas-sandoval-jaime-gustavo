@@ -1,6 +1,6 @@
 import java.io.File
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
 
 fun main() {
   Archivos.inicializarArchivos()
@@ -135,7 +135,7 @@ class Archivos {
     fun guardarProductos(productos: List<Producto>) {
       File(archivoProductos).printWriter().use { out ->
         productos.forEach {
-          out.println("${it.id}, ${it.nombre}, ${it.precio}, ${it.fechaCaducidad}, ${it.stock}, ${it.tienda}")
+          out.println("${it.id},${it.nombre},${it.precio},${it.fechaCaducidad},${it.stock},${it.tienda?.ruc}")
         }
       }
     }
@@ -143,25 +143,52 @@ class Archivos {
     fun guardarTiendas(tiendas: List<Tienda>) {
       File(archivoTiendas).printWriter().use { out ->
         tiendas.forEach {
-          out.println("${it.ruc}, ${it.nombre}, ${it.telefono}, ${it.direccion}, ${it.estaAbierto}")
+          out.println("${it.ruc},${it.nombre},${it.telefono},${it.direccion},${it.estaAbierto}")
         }
       }
     }
 
+    fun leerProductosPorTienda(rucTienda: String): List<Producto> {
+      val listaProductos = mutableListOf<Producto>()
+      File(archivoProductos).forEachLine {
+        val datos = it.split(",")
+        if(datos.size == 6){
+          val rucTien = datos[5]
+          val formatoFecha = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
+          val fechaCaducidad: Date = formatoFecha.parse(datos[3].trim())
+          if(rucTien == rucTienda){
+            listaProductos.add(
+              Producto(
+                datos[0].toInt(),
+                datos[1],
+                datos[2].toDouble(),
+                fechaCaducidad,
+                datos[4].trim().toInt(),
+                Tienda("","","","",false)
+              )
+            )
+          }
+
+        }
+      }
+      return listaProductos
+    }
     fun leerProductos(): List<Producto> {
       val listaProductos = mutableListOf<Producto>()
       File(archivoProductos).forEachLine {
         val datos = it.split(",")
         if(datos.size == 6){
-          val rucTienda = datos[4]
+          val rucTienda = datos[5]
           val tienda = leerTiendas().find { it.ruc == rucTienda }
+          val formatoFecha = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH)
+          val fechaCaducidad: Date = formatoFecha.parse(datos[3].trim())
           listaProductos.add(
             Producto(
               datos[0].toInt(),
               datos[1],
               datos[2].toDouble(),
-              dateFormat.parse(datos[3]),
-              datos[4].toInt(),
+              fechaCaducidad,
+              datos[4].trim().toInt(),
               tienda
             )
           )
@@ -172,18 +199,32 @@ class Archivos {
 
     fun leerTiendas(): List<Tienda>{
       val listaTiendas = mutableListOf<Tienda>()
+
       File(archivoTiendas).forEachLine {
         val datos = it.split(",")
         if(datos.size == 5){
-          listaTiendas.add(
-            Tienda(
-              datos[0],
-              datos[1],
-              datos[2],
-              datos[3],
-              datos[4].toBooleanStrict()
-            )
+
+          val estaAbierto = when (val estado = datos[4].trim().lowercase()) {
+            "true" -> true
+            "false" -> false
+            else -> {
+              println("Valor inválido para 'estaAbierto': $estado. Se ignorará esta entrada.")
+              return@forEachLine  // Salir del forEachLine si el valor no es "true" o "false"
+            }
+          }
+
+          val tienda = Tienda(
+            datos[0],
+            datos[1],
+            datos[2],
+            datos[3],
+            estaAbierto
           )
+
+          val productosAsociados = leerProductosPorTienda(tienda.ruc)
+          tienda.productos.addAll(productosAsociados)
+
+          listaTiendas.add(tienda)
         }
       }
       return listaTiendas
@@ -201,16 +242,22 @@ fun crearTienda():Tienda{
   val telefono = readLine() ?: ""
   println("Ingresa el dirección de la Tienda: ")
   val direccion = readLine() ?: ""
-  println("Estado de la tienda abierto o cerrado: ")
-  val estado = readLine() ?: ""
-  var condicion : Boolean = false
-  if(estado == "abierto"){
-    condicion = true;
-  }else if (estado == "cerrado"){
-    condicion = false;
+
+  var condicion: Boolean? = null
+  while (condicion == null) {
+    println("Estado de la tienda (abierto/cerrado): ")
+    val estado = readLine()?.lowercase() ?: ""
+    condicion = when (estado) {
+      "abierto" -> true
+      "cerrado" -> false
+      else -> {
+        println("Valor ingresado incorrecto. Por favor, ingresa 'abierto' o 'cerrado'.")
+        continue
+      }
+    }
   }
 
-  val tienda = Tienda(ruc, nombre, telefono, direccion, condicion)
+  val tienda = Tienda(ruc, nombre, telefono, direccion, condicion!!)
   Archivos.guardarTiendas(Archivos.leerTiendas() + tienda)
   return tienda
 }
@@ -230,8 +277,13 @@ fun crearProducto(rucTienda: String):Producto{
 
   if(tienda != null){
     val producto = Producto(Archivos.leerProductos().size+1, nombre, precio, fechaCaducidad, stock, tienda)
+    tienda.productos.add(producto)
+    println(tienda.productos)
+    println(producto)
+    Archivos.guardarTiendas(Archivos.leerTiendas());
     val productos = Archivos.leerProductos() + producto
     Archivos.guardarProductos(productos)
+
     return producto
   }else{
     println("Tienda no encontrada")
@@ -250,9 +302,12 @@ fun listarTiendas(){
 fun listarProductosPorTienda(rucTienda: String){
   val tienda = Archivos.leerTiendas().find{it.ruc == rucTienda}
   if(tienda != null){
-    println("Productos de la tienda ${tienda.nombre}: ")
-    tienda.productos.forEach{
-      println("${it.id} - ${it.nombre} - ${it.precio}")
+    if (tienda.productos.isNotEmpty()) {
+      tienda.productos.forEach { producto ->
+        println("${producto.id} - ${producto.nombre} - ${producto.precio}")
+      }
+    } else {
+      println("No hay productos en esta tienda.")
     }
   }else{
     println("Tienda no encontrada")
@@ -265,22 +320,35 @@ fun actualizarProducto(idProducto: Int){
     println("****Editando producto: ${producto.nombre}*****")
     print("Ingresa el nuevo nombre (vacío para mantener el anterior)")
     val nuevoNombre = readLine() ?: ""
-    print("Ingresa el nuevo precio (0.0 para mantener el anterior)")
-    val nuevoPrecio = readLine() ?: 0.0
-    print("Ingresa el nuevo stock (0 para mantener el anterior)")
-    val nuevoStock = readLine() ?: 0
+
+
+    print("Ingresa el nuevo precio (0.0 para mantener el anterior): ")
+    val nuevoPrecioInput = readLine()
+    val nuevoPrecio = if (!nuevoPrecioInput.isNullOrBlank()) {
+      nuevoPrecioInput.toDoubleOrNull() ?: producto.precio
+    } else {
+      producto.precio
+    }
+
+    print("Ingresa el nuevo stock (0 para mantener el anterior): ")
+    val nuevoStockInput = readLine()
+    val nuevoStock = if (!nuevoStockInput.isNullOrBlank()) {
+      nuevoStockInput.toIntOrNull() ?: producto.stock
+    } else {
+      producto.stock
+    }
 
     val productoActualizado = Archivos.leerProductos().map {
-      if(it.id == idProducto){
+      if (it.id == idProducto) {
         Producto(
           it.id,
-          if(nuevoNombre.isNotBlank()) nuevoNombre else it.nombre,
-          (if(nuevoPrecio != 0.0) nuevoPrecio else it.precio) as Double,
+          if (nuevoNombre.isNotBlank()) nuevoNombre else it.nombre,
+          nuevoPrecio,
           it.fechaCaducidad,
-          (if(nuevoStock != 0) nuevoStock else it.stock) as Int,
+          nuevoStock,
           it.tienda
         )
-      }else it
+      } else it
     }
     Archivos.guardarProductos(productoActualizado)
     println("Producto Actualizado")
@@ -343,11 +411,12 @@ fun eliminarProducto(idProducto: Int){
 fun eliminarTienda(rucTienda: String){
   val tienda = Archivos.leerTiendas().find{ it.ruc == rucTienda}
   if(tienda != null){
+    val productosActualizados = Archivos.leerProductos().filterNot { it.tienda?.ruc == rucTienda }
+    Archivos.guardarProductos(productosActualizados)
+
     val tiendasActualizadas = Archivos.leerTiendas().filterNot { it.ruc == rucTienda }
     Archivos.guardarTiendas(tiendasActualizadas)
 
-    val productosActualizados = Archivos.leerProductos().filterNot { it.tienda!!.ruc == rucTienda }
-    Archivos.guardarProductos(productosActualizados)
     println("Tienda eliminada")
   }else{
     println("Tienda no encontrada")
