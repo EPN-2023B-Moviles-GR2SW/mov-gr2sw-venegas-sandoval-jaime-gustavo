@@ -95,6 +95,12 @@ class MainActivity : AppCompatActivity() {
             .setOnClickListener {
                 irActividad(ECrudEntrenador::class.java)
             }
+
+        val botonRView = findViewById<Button>(R.id.btn_recycler_view)
+        botonRView
+            .setOnClickListener {
+                irActividad(FRecyclerView::class.java)
+            }
     }
 
     fun abrirActividadConParametros(
@@ -118,7 +124,7 @@ class MainActivity : AppCompatActivity() {
 
     fun mostrarSnackbar(texto:String){
         Snackbar.make(
-            findViewById(R.id.id_layout_main),
+            findViewById(R.id.btn_recycler_view),
             texto,
             Snackbar.LENGTH_LONG
         )
