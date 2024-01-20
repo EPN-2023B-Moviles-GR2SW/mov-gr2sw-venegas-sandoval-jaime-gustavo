@@ -6,11 +6,11 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 
-class FormularioTienda : AppCompatActivity() {
+class CrearTienda : AppCompatActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_formulario_tienda)
+    setContentView(R.layout.activity_crear_tienda)
 
     val nombreInput = findViewById<EditText>(R.id.input_nombre_tienda)
     val idInput = findViewById<EditText>(R.id.input_id_tienda)
@@ -24,7 +24,7 @@ class FormularioTienda : AppCompatActivity() {
     val intentDevolverParametros = Intent()
     intentDevolverParametros.putExtra("idModificado", id)
     intentDevolverParametros.putExtra("nombreModificado", nombre)
-    intentDevolverParametros.putExtra("dirccionModificada", direccion)
+    intentDevolverParametros.putExtra("direccionModificada", direccion)
     setResult(
       RESULT_OK,
       intentDevolverParametros

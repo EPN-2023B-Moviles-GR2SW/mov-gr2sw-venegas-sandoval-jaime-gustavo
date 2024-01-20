@@ -6,4 +6,61 @@
     android:layout_height="match_parent"
     tools:context=".EditarTienda">
 
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="76dp"
+        android:text="Editar Tienda:"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/input_n_nombre_tienda"
+        app:layout_constraintEnd_toEndOf="@+id/input_n_nombre_tienda"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/input_n_nombre_tienda" />
+
+    <Button
+        android:id="@+id/btn_editar_tienda"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Editar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.693" />
+
+    <EditText
+        android:id="@+id/input_n_nombre_tienda"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="64dp"
+        android:ems="10"
+        android:inputType="text"
+        app:layout_constraintBottom_toTopOf="@+id/input_n_direccion_tienda"
+        app:layout_constraintEnd_toEndOf="@+id/input_n_direccion_tienda"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/input_n_direccion_tienda" />
+
+    <EditText
+        android:id="@+id/input_n_direccion_tienda"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="100dp"
+        android:ems="10"
+        android:inputType="text"
+        app:layout_constraintBottom_toTopOf="@+id/btn_editar_tienda"
+        app:layout_constraintEnd_toEndOf="@+id/btn_editar_tienda"
+        app:layout_constraintStart_toStartOf="@+id/btn_editar_tienda" />
+
+    <TextView
+        android:id="@+id/txt_nombre"
+        android:layout_width="79dp"
+        android:layout_height="21dp"
+        android:layout_marginStart="32dp"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView4"
+        app:layout_constraintStart_toEndOf="@+id/textView4"
+        app:layout_constraintTop_toTopOf="@+id/textView4"
+        app:layout_constraintVertical_bias="1.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>

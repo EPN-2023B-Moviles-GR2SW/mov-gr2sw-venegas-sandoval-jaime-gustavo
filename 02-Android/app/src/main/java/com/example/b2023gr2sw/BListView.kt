@@ -83,7 +83,7 @@ class BListView : AppCompatActivity() {
     }
   }
 
-  fun abrirDialogo() {
+    fun abrirDialogo() {
     val builder = AlertDialog.Builder(this)
     builder.setTitle("Desea eliminar")
     builder.setPositiveButton(

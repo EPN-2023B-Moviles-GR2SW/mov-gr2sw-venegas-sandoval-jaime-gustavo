@@ -96,10 +96,16 @@ class MainActivity : AppCompatActivity() {
                 irActividad(ECrudEntrenador::class.java)
             }
 
-        val botonRView = findViewById<Button>(R.id.btn_recycler_view)
+        val botonRView = findViewById<Button>(R.id.btn_revcycler_view)
         botonRView
             .setOnClickListener {
                 irActividad(FRecyclerView::class.java)
+            }
+
+        val botonGoogleMaps = findViewById<Button>(R.id.btn_google_maps)
+        botonGoogleMaps
+            .setOnClickListener {
+                irActividad(GGoogleMapsActivity::class.java)
             }
     }
 
@@ -124,7 +130,7 @@ class MainActivity : AppCompatActivity() {
 
     fun mostrarSnackbar(texto:String){
         Snackbar.make(
-            findViewById(R.id.btn_recycler_view),
+            findViewById(R.id.id_layout_main),
             texto,
             Snackbar.LENGTH_LONG
         )
