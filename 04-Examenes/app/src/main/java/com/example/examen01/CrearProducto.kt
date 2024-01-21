@@ -3,9 +3,9 @@ package com.example.examen01
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 
-class ListaProductos : AppCompatActivity() {
+class CrearProducto : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_lista_productos)
+    setContentView(R.layout.activity_crear_producto)
   }
 }
