@@ -6,6 +6,6 @@ class Tienda(
   var direccion: String,
 ) {
   override fun toString(): String {
-    return "${id} - ${nombre}"
+    return "${id} - ${nombre} - ${direccion}"
   }
 }

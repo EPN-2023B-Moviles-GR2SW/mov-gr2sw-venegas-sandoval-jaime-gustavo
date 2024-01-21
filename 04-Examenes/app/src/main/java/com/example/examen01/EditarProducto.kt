@@ -15,7 +15,10 @@ class EditarProducto : AppCompatActivity() {
     val idAnterior = intent.getStringExtra("id")
     val nombreAnterior = intent.getStringExtra("nombre")
     val precioAnterior = intent.getStringExtra("precio")
+    val nombreTienda = intent.getStringExtra("nombreTienda")
 
+    val txtNombre = findViewById<TextView>(R.id.txt_nombre_t_producto_a)
+    txtNombre.setText(nombreTienda)
     val titulo = findViewById<TextView>(R.id.txt_nombre_producto)
     titulo.setText(nombreAnterior)
     val nombreActualizado = findViewById<EditText>(R.id.input_n_nombre_pro)

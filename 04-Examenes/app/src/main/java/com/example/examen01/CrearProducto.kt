@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 
 class CrearProducto : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,6 +16,10 @@ class CrearProducto : AppCompatActivity() {
     val nombreProducto = findViewById<EditText>(R.id.input_nombre_producto)
     val precioProducto = findViewById<EditText>(R.id.input_precio_producto)
     val botonAnadirProducto = findViewById<Button>(R.id.btn_anadir_producto)
+    val nombreTiendaPertenece = intent.getStringExtra("nombreTienda")
+    val txtNombreTienda = findViewById<TextView>(R.id.txt_nombre_t_pro)
+    txtNombreTienda.setText(nombreTiendaPertenece)
+
     botonAnadirProducto.setOnClickListener{
       devolverRespuesta(
       idProducto.text.toString().toInt(), nombreProducto.text.toString(), precioProducto.text.toString().toDouble())}

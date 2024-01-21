@@ -13,7 +13,9 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ListView
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
+import com.google.android.material.snackbar.Snackbar
 
 class ListProducto : AppCompatActivity() {
   private lateinit var adaptador: ArrayAdapter<Producto>
@@ -23,6 +25,7 @@ class ListProducto : AppCompatActivity() {
   var idTiendaPertenece: Int = -1
   var arregloProdutos = BBaseDatosMemoria.arregloProducto
   var posicionItemSeleccionado = 0
+  var nombreTiendaPertenece = ""
 
   val callbackContenidoIntentExplicito =
     registerForActivityResult(
@@ -38,6 +41,7 @@ class ListProducto : AppCompatActivity() {
           precioProducto = (data?.getDoubleExtra("precioProducto", 0.0) ?: "") as Double
 
           anadirProducto(idProducto, nombreProducto, precioProducto, idTiendaPertenece)
+          mostrarSnackbar("Producto ${nombreProducto} creado con éxito")
         }
       }
     }
@@ -55,7 +59,7 @@ class ListProducto : AppCompatActivity() {
           val precioNuevo = data?.getDoubleExtra("precioNuevo", 0.0) ?: 0.0
 
           actualizarProducto(idProducto, nombreNuevo, precioNuevo)
-
+          mostrarSnackbar("Producto ${nombreNuevo} actualizado con éxito")
         }
       }
     }
@@ -65,6 +69,7 @@ class ListProducto : AppCompatActivity() {
 
 
     idTiendaPertenece = intent.getIntExtra("idTienda", 0)
+    nombreTiendaPertenece = intent.getStringExtra("nombreTienda").toString()
 
     val listView = findViewById<ListView>(R.id.lv_list_productos)
     System.out.println("esto llega a la actividad Productos ${idTiendaPertenece}")
@@ -80,11 +85,23 @@ class ListProducto : AppCompatActivity() {
     val botonCrearPoducto = findViewById<Button>(R.id.btn_crear_producto)
     botonCrearPoducto.setOnClickListener{ abrirActividadconParametros(CrearProducto::class.java) }
 
+    val txtnombreTiendaProducto = findViewById<TextView>(R.id.txt_nombre_tienda_productos)
+    txtnombreTiendaProducto.setText(nombreTiendaPertenece)
+
     registerForContextMenu(listView)
 
   }
   private fun productosFiltrados(): List<Producto>{
     return arregloProdutos.filter { it.idTienda == idTiendaPertenece }
+  }
+
+  fun mostrarSnackbar(texto:String){
+    Snackbar.make(
+      findViewById(R.id.id_layout_producto),
+      texto,
+      Snackbar.LENGTH_LONG
+    )
+      .show()
   }
   fun anadirProducto(
     idProducto: Int,
@@ -121,7 +138,9 @@ class ListProducto : AppCompatActivity() {
 
   }
 
-  fun eliminarProducto(posicionEliminar: Int){
+  fun eliminarProducto(idEliminar: Int){
+    val posicionEliminar = arregloProdutos.indexOfFirst { it.id == idEliminar }
+    mostrarSnackbar("Producto eliminado con éxito")
     arregloProdutos.removeAt(posicionEliminar)
     adaptador.clear()
     adaptador.addAll(productosFiltrados())
@@ -133,6 +152,7 @@ class ListProducto : AppCompatActivity() {
     intentExplicito.putExtra("idProducto", idProducto)
     intentExplicito.putExtra("nombre", nombreProducto)
     intentExplicito.putExtra("precio", precioProducto)
+    intentExplicito.putExtra("nombreTienda", nombreTiendaPertenece)
 
     callbackContenidoIntentExplicito.launch(intentExplicito)
   }
@@ -144,6 +164,7 @@ class ListProducto : AppCompatActivity() {
     intentExplicito.putExtra("id", productosFiltrados()[posicionItemSeleccionado].id.toString())
     intentExplicito.putExtra("nombre", productosFiltrados()[posicionItemSeleccionado].nombre)
     intentExplicito.putExtra("precio", productosFiltrados()[posicionItemSeleccionado].precio.toString())
+    intentExplicito.putExtra("nombreTienda", nombreTiendaPertenece)
 
     respuestaProductoActualizado.launch(intentExplicito)
   }
@@ -169,7 +190,7 @@ class ListProducto : AppCompatActivity() {
         return true
       }
       R.id.m_eliminar_pro ->{
-        abrirDialogo(productoSeleccionado.nombre, posicionItemSeleccionado)
+        abrirDialogo(productoSeleccionado.nombre, productoSeleccionado.id)
         return true
       }
       else -> super.onContextItemSelected(item)
@@ -178,7 +199,7 @@ class ListProducto : AppCompatActivity() {
 
   fun abrirDialogo(nombreProducto: String, idProducto: Int){
     val builder = AlertDialog.Builder(this)
-    builder.setTitle("Eliminar Tienda")
+    builder.setTitle("Eliminar Producto")
     builder.setPositiveButton(
       "Aceptar",
       DialogInterface.OnClickListener{ dialog, which ->
@@ -190,7 +211,7 @@ class ListProducto : AppCompatActivity() {
       null
     )
 
-    builder.setMessage("Estas seguro de eliminar la tienda ${nombreProducto}")
+    builder.setMessage("Estas seguro de eliminar el producto ${nombreProducto}")
     val dialogo =builder.create()
     dialogo.show()
   }

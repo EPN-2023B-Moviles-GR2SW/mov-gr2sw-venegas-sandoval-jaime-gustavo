@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ListView
 import androidx.activity.result.contract.ActivityResultContracts
+import com.google.android.material.snackbar.Snackbar
 
 class ListTienda : AppCompatActivity() {
   var arreglo = BBaseDatosMemoria.arregloTienda
@@ -37,6 +38,7 @@ class ListTienda : AppCompatActivity() {
           nombreModificado = data?.getStringExtra("nombreModificado") ?: ""
           direccionModificada = data?.getStringExtra("direccionModificada") ?: ""
           anadirTienda(idModificado, nombreModificado, direccionModificada)
+          mostrarSnackbar("Tienda ${nombreModificado} creada con éxito")
         }
       }
     }
@@ -54,6 +56,7 @@ class ListTienda : AppCompatActivity() {
           System.out.println("Esto llega a nombre: ${nombreNuevo}")
           System.out.println("Esto llega a direccion: ${direccionNueva}")
           actualizarTienda(nombreNuevo, direccionNueva)
+          mostrarSnackbar("Tienda ${nombreNuevo} actualizada con éxito")
         }
       }
     }
@@ -77,11 +80,13 @@ class ListTienda : AppCompatActivity() {
     registerForContextMenu(listView)
   }
 
-  fun irActividad(
-    clase: Class<*>
-  ){
-    val intent = Intent(this, clase)
-    startActivity(intent)
+  fun mostrarSnackbar(texto:String){
+    Snackbar.make(
+      findViewById(R.id.id_layout_tiendas),
+      texto,
+      Snackbar.LENGTH_LONG
+    )
+      .show()
   }
 
   fun abrirActividadconParametros(
@@ -113,9 +118,11 @@ class ListTienda : AppCompatActivity() {
   ){
     val intentExplicito = Intent(this, clase)
     val idTienda = arreglo[posicionTiendaSeleccionada].id
+    val nombreTienda = arreglo[posicionTiendaSeleccionada].nombre
     System.out.println("Esto tiene el idTienda ${idTienda}")
 
     intentExplicito.putExtra("idTienda", idTienda)
+    intentExplicito.putExtra("nombreTienda", nombreTienda)
 
     startActivity(intentExplicito)
   }
@@ -153,8 +160,10 @@ class ListTienda : AppCompatActivity() {
   }
 
   fun eliminarTienda(posicionEliminar: Int){
+    mostrarSnackbar("Tienda eliminada con éxito")
     arreglo.removeAt(posicionEliminar)
     adaptador.notifyDataSetChanged()
+
   }
 
   override fun onCreateContextMenu(

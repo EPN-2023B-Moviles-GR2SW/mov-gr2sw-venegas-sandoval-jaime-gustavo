@@ -18,7 +18,7 @@ class EditarTienda : AppCompatActivity() {
     System.out.println("Esto llega a la acutalización ${direccionAnterior}")
 
     val titulo = findViewById<TextView>(R.id.txt_nombre)
-    titulo.setText(idAnterior)
+    titulo.setText(nombreAnterior)
     val nombreActualizado = findViewById<EditText>(R.id.input_n_nombre_tienda)
     nombreActualizado.setText(nombreAnterior)
     val direccionAcutalizada = findViewById<EditText>(R.id.input_n_direccion_tienda)
