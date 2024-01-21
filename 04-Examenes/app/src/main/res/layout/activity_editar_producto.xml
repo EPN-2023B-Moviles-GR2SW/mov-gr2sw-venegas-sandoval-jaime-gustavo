@@ -6,4 +6,64 @@
     android:layout_height="match_parent"
     tools:context=".EditarProducto">
 
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="72dp"
+        android:text="Editar Producto"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/input_n_nombre_pro"
+        app:layout_constraintEnd_toEndOf="@+id/input_n_nombre_pro"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/input_n_nombre_pro" />
+
+    <Button
+        android:id="@+id/btn_actualizar_producto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Editar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.478"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.664" />
+
+    <EditText
+        android:id="@+id/input_n_nombre_pro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="92dp"
+        android:ems="10"
+        android:hint="Nuevo nombre"
+        android:inputType="text"
+        app:layout_constraintBottom_toTopOf="@+id/input_n_precio"
+        app:layout_constraintEnd_toEndOf="@+id/input_n_precio"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/input_n_precio" />
+
+    <EditText
+        android:id="@+id/input_n_precio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="56dp"
+        android:ems="10"
+        android:hint="Nuevo precio"
+        android:inputType="text"
+        app:layout_constraintBottom_toTopOf="@+id/btn_actualizar_producto"
+        app:layout_constraintEnd_toEndOf="@+id/btn_actualizar_producto"
+        app:layout_constraintHorizontal_bias="0.487"
+        app:layout_constraintStart_toStartOf="@+id/btn_actualizar_producto" />
+
+    <TextView
+        android:id="@+id/txt_nombre_producto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView7"
+        app:layout_constraintStart_toEndOf="@+id/textView7"
+        app:layout_constraintTop_toTopOf="@+id/textView7"
+        app:layout_constraintVertical_bias="0.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>

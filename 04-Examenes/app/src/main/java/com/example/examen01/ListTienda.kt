@@ -17,6 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 
 class ListTienda : AppCompatActivity() {
   var arreglo = BBaseDatosMemoria.arregloTienda
+
   var posicionTiendaSeleccionada = 0
   private lateinit var adaptador: ArrayAdapter<Tienda>
   var idModificado = 0
@@ -107,6 +108,18 @@ class ListTienda : AppCompatActivity() {
     respuestaActividadActualizacion.launch(intentExplicito)
   }
 
+  fun abrirACtividadProducto(
+    clase: Class<*>
+  ){
+    val intentExplicito = Intent(this, clase)
+    val idTienda = arreglo[posicionTiendaSeleccionada].id
+    System.out.println("Esto tiene el idTienda ${idTienda}")
+
+    intentExplicito.putExtra("idTienda", idTienda)
+
+    startActivity(intentExplicito)
+  }
+
   fun anadirTienda(
     id: Int,
     nombre: String,
@@ -170,7 +183,8 @@ class ListTienda : AppCompatActivity() {
         abrirDialogo(tiendaSeleccionada.nombre, posicionTiendaSeleccionada)
         return true
       }
-      R.id.mi_eliminar -> {
+      R.id.mi_ver_productos -> {
+        abrirACtividadProducto(ListProducto::class.java)
         return true
       }
       else -> super.onContextItemSelected(item)

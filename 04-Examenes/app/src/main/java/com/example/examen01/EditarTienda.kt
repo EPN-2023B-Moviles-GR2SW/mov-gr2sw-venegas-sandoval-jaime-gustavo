@@ -20,9 +20,9 @@ class EditarTienda : AppCompatActivity() {
     val titulo = findViewById<TextView>(R.id.txt_nombre)
     titulo.setText(idAnterior)
     val nombreActualizado = findViewById<EditText>(R.id.input_n_nombre_tienda)
-    nombreActualizado.setHint(nombreAnterior)
+    nombreActualizado.setText(nombreAnterior)
     val direccionAcutalizada = findViewById<EditText>(R.id.input_n_direccion_tienda)
-    direccionAcutalizada.setHint(direccionAnterior)
+    direccionAcutalizada.setText(direccionAnterior)
 
     val botonEditarTienda = findViewById<Button>(R.id.btn_editar_tienda)
     botonEditarTienda.setOnClickListener{

@@ -62,6 +62,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="52dp"
         android:text="NUEVA TIENDA"
+        android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/input_id_tienda"
         app:layout_constraintEnd_toEndOf="@+id/input_id_tienda"
         app:layout_constraintHorizontal_bias="0.493"
