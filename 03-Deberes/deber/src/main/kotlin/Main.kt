@@ -5,7 +5,7 @@ import java.util.*
 fun main() {
   Archivos.inicializarArchivos()
   while(true){
-    println("************\nMenú*************")
+    println("************Menú*************")
     println("1. Crear Tienda")
     println("2. Crear Producto")
     println("3. Listar Tiendas")
