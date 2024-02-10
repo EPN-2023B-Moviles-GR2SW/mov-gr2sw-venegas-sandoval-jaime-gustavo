@@ -113,4 +113,5 @@ class ESqliteHelperEntrenador(
     baseDatosLectura.close()
     return usuarioEncontrado
   }
+
 }
