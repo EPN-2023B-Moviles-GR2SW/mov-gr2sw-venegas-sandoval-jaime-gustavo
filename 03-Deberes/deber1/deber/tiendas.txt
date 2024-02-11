@@ -1,2 +1,0 @@
-1625,Licorería,0985,Arcadia,true
-1852,Bazar,0985,Quitumbe,true
