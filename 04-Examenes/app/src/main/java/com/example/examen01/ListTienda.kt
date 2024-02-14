@@ -17,7 +17,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.snackbar.Snackbar
 
 class ListTienda : AppCompatActivity() {
-  var arreglo = BBaseDatosMemoria.arregloTienda
+  private lateinit var arreglo: ArrayList<Tienda>
+
 
   var posicionTiendaSeleccionada = 0
   private lateinit var adaptador: ArrayAdapter<Tienda>
@@ -33,12 +34,10 @@ class ListTienda : AppCompatActivity() {
       if(result.resultCode == Activity.RESULT_OK){
         if(result.data != null){
           val data = result.data
-
           idModificado = data?.getIntExtra("idModificado",-1) ?: -1
           nombreModificado = data?.getStringExtra("nombreModificado") ?: ""
           direccionModificada = data?.getStringExtra("direccionModificada") ?: ""
           anadirTienda(idModificado, nombreModificado, direccionModificada)
-          mostrarSnackbar("Tienda ${nombreModificado} creada con éxito")
         }
       }
     }
@@ -53,8 +52,6 @@ class ListTienda : AppCompatActivity() {
           val data = result.data
           val nombreNuevo = data?.getStringExtra("nombreNuevo").toString()
           val direccionNueva = data?.getStringExtra("direccionNueva").toString()
-          System.out.println("Esto llega a nombre: ${nombreNuevo}")
-          System.out.println("Esto llega a direccion: ${direccionNueva}")
           actualizarTienda(nombreNuevo, direccionNueva)
           mostrarSnackbar("Tienda ${nombreNuevo} actualizada con éxito")
         }
@@ -62,6 +59,8 @@ class ListTienda : AppCompatActivity() {
     }
 
   override fun onCreate(savedInstanceState: Bundle?) {
+    TBaseDatos.tablas = SQLiteHelperCenter(this)
+    arreglo = TBaseDatos.tablas!!.consultarTiendas()
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_list_tienda)
 
@@ -72,6 +71,7 @@ class ListTienda : AppCompatActivity() {
       arreglo
     )
     listView.adapter = adaptador
+    adaptador.notifyDataSetChanged()
 
     val botonCrearTienda = findViewById<Button>(R.id.btn_anadir_tienda)
     botonCrearTienda
@@ -119,7 +119,6 @@ class ListTienda : AppCompatActivity() {
     val intentExplicito = Intent(this, clase)
     val idTienda = arreglo[posicionTiendaSeleccionada].id
     val nombreTienda = arreglo[posicionTiendaSeleccionada].nombre
-    System.out.println("Esto tiene el idTienda ${idTienda}")
 
     intentExplicito.putExtra("idTienda", idTienda)
     intentExplicito.putExtra("nombreTienda", nombreTienda)
@@ -127,43 +126,51 @@ class ListTienda : AppCompatActivity() {
     startActivity(intentExplicito)
   }
 
+  fun actualizarArreglo() {
+    arreglo = TBaseDatos.tablas!!.consultarTiendas()
+    adaptador.clear()
+    arreglo.forEach {
+      adaptador.insert(it, adaptador.count)
+    }
+  }
   fun anadirTienda(
     id: Int,
     nombre: String,
     direccion: String,
   ){
-    arreglo.add(
-      Tienda(
-        id,
-        nombre,
-        direccion,
-      )
-    )
-    adaptador.notifyDataSetChanged()
+    val respuesta = TBaseDatos.tablas?.crearTienda(id, nombre, direccion)
+    if(respuesta == true)  {
+      mostrarSnackbar("Tienda ${nombreModificado} creada con éxito")
+      actualizarArreglo()
+    }else{
+      mostrarSnackbar("Tienda Error")
+    }
   }
 
   fun actualizarTienda(
     nombre: String,
     direccion: String
   ){
-    val tiendaActual = arreglo[posicionTiendaSeleccionada]
-
-    if(tiendaActual.nombre != nombre){
-      tiendaActual.nombre = nombre
+    val idTienda = arreglo[posicionTiendaSeleccionada].id
+    val respuesta = TBaseDatos.tablas?.actualizarTienda(nombre,direccion,idTienda)
+    if(respuesta == true){
+      mostrarSnackbar("Tienda actualizada con éxito")
+      actualizarArreglo()
+    }else{
+      mostrarSnackbar("Algo salió mal")
     }
-    if(tiendaActual.direccion != direccion){
-      tiendaActual.direccion = direccion
-    }
 
-    adaptador.notifyDataSetChanged()
 
   }
 
-  fun eliminarTienda(posicionEliminar: Int){
-    mostrarSnackbar("Tienda eliminada con éxito")
-    arreglo.removeAt(posicionEliminar)
-    adaptador.notifyDataSetChanged()
-
+  fun eliminarTienda(idEliminar: Int){
+    val respuesta = TBaseDatos.tablas?.eliminarTienda(idEliminar)
+    if (respuesta == true){
+      mostrarSnackbar("Tienda eliminada con éxito")
+      actualizarArreglo()
+    }else{
+      mostrarSnackbar("Algo salió mal")
+    }
   }
 
   override fun onCreateContextMenu(
@@ -189,7 +196,7 @@ class ListTienda : AppCompatActivity() {
         return true
       }
       R.id.mi_eliminar -> {
-        abrirDialogo(tiendaSeleccionada.nombre, posicionTiendaSeleccionada)
+        abrirDialogo(tiendaSeleccionada.nombre, tiendaSeleccionada.id)
         return true
       }
       R.id.mi_ver_productos -> {

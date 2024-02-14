@@ -44,11 +44,12 @@ class SQLiteHelperCenter (
     nombre: String,
     direccion: String
   ): Boolean{
+    System.out.println("Entre a la función crear Tienda")
     val baseDatosEscritura = writableDatabase
     val valoresAGuardar = ContentValues()
     valoresAGuardar.put("id", id)
     valoresAGuardar.put("nombre", nombre)
-    valoresAGuardar.put("descripcion", direccion)
+    valoresAGuardar.put("direccion", direccion)
     val resultadoGuardar = baseDatosEscritura
         .insert(
           "Tienda",
@@ -61,13 +62,13 @@ class SQLiteHelperCenter (
 
   fun actualizarTienda(
     nombre: String,
-    descripcion: String,
+    direccion: String,
     id: Int,
   ):Boolean{
     val conexionEscritura = writableDatabase
     val valoresActualizar = ContentValues()
     valoresActualizar.put("nombre", nombre)
-    valoresActualizar.put("descripcion", descripcion)
+    valoresActualizar.put("direccion", direccion)
     val parametrosConsultaActualizar = arrayOf(id.toString())
     val resultadoActualizacion = conexionEscritura
       .update(
@@ -154,36 +155,6 @@ class SQLiteHelperCenter (
       )
     conexionEscritura.close()
     return if(resultadoEliminacion.toInt() == -1) false else true
-  }
-
-  fun consultarTiendaPorID(id: Int) : Tienda{
-    val baseDatosLectura = readableDatabase
-    val scriptConsultaLectura = """
-      SELECT * FROM Tienda WHERE id = ?
-      """.trimIndent()
-    val parametrosConsultaLectura = arrayOf(id.toString())
-    val resultadoConsultaLectura = baseDatosLectura.rawQuery(
-      scriptConsultaLectura,
-      parametrosConsultaLectura,
-    )
-
-    val existeUsuario = resultadoConsultaLectura.moveToFirst()
-    val tiendaEncontrada = Tienda(0, "","")
-    if(existeUsuario){
-      do{
-        val id = resultadoConsultaLectura.getInt(0)
-        val nombre = resultadoConsultaLectura.getString(1)
-        val direccion = resultadoConsultaLectura.getString(2)
-        if(id != null){
-          tiendaEncontrada.id = id
-          tiendaEncontrada.nombre = nombre
-          tiendaEncontrada.direccion = direccion
-        }
-      }while (resultadoConsultaLectura.moveToNext())
-    }
-    resultadoConsultaLectura.close()
-    baseDatosLectura.close()
-    return tiendaEncontrada
   }
 
   fun consultarTiendas() : ArrayList<Tienda>{

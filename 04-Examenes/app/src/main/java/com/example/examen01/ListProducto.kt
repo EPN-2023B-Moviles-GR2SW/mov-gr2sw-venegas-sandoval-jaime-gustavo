@@ -19,11 +19,11 @@ import com.google.android.material.snackbar.Snackbar
 
 class ListProducto : AppCompatActivity() {
   private lateinit var adaptador: ArrayAdapter<Producto>
+  private lateinit var arregloProdutos: ArrayList<Producto>
   var idProducto = 0
   var nombreProducto = ""
   var precioProducto = 0.0
   var idTiendaPertenece: Int = -1
-  var arregloProdutos = BBaseDatosMemoria.arregloProducto
   var posicionItemSeleccionado = 0
   var nombreTiendaPertenece = ""
 
@@ -41,7 +41,6 @@ class ListProducto : AppCompatActivity() {
           precioProducto = (data?.getDoubleExtra("precioProducto", 0.0) ?: "") as Double
 
           anadirProducto(idProducto, nombreProducto, precioProducto, idTiendaPertenece)
-          mostrarSnackbar("Producto ${nombreProducto} creado con éxito")
         }
       }
     }
@@ -59,17 +58,19 @@ class ListProducto : AppCompatActivity() {
           val precioNuevo = data?.getDoubleExtra("precioNuevo", 0.0) ?: 0.0
 
           actualizarProducto(idProducto, nombreNuevo, precioNuevo)
-          mostrarSnackbar("Producto ${nombreNuevo} actualizado con éxito")
         }
       }
     }
   override fun onCreate(savedInstanceState: Bundle?) {
+    idTiendaPertenece = intent.getIntExtra("idTienda", 0)
+    nombreTiendaPertenece = intent.getStringExtra("nombreTienda").toString()
+    TBaseDatos.tablas = SQLiteHelperCenter(this)
+    arregloProdutos = TBaseDatos.tablas!!.consultarProductoTienda(idTiendaPertenece)
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_list_producto)
 
 
-    idTiendaPertenece = intent.getIntExtra("idTienda", 0)
-    nombreTiendaPertenece = intent.getStringExtra("nombreTienda").toString()
+
 
     val listView = findViewById<ListView>(R.id.lv_list_productos)
     System.out.println("esto llega a la actividad Productos ${idTiendaPertenece}")
@@ -78,7 +79,7 @@ class ListProducto : AppCompatActivity() {
     adaptador = ArrayAdapter(
       this,
       android.R.layout.simple_list_item_1,
-      productosFiltrados()
+      arregloProdutos
     )
     listView.adapter = adaptador
 
@@ -91,8 +92,13 @@ class ListProducto : AppCompatActivity() {
     registerForContextMenu(listView)
 
   }
-  private fun productosFiltrados(): List<Producto>{
-    return arregloProdutos.filter { it.idTienda == idTiendaPertenece }
+
+  fun actualizarArreglo() {
+    arregloProdutos = TBaseDatos.tablas!!.consultarProductoTienda(idTiendaPertenece)
+    adaptador.clear()
+    arregloProdutos.forEach {
+      adaptador.insert(it, adaptador.count)
+    }
   }
 
   fun mostrarSnackbar(texto:String){
@@ -109,16 +115,13 @@ class ListProducto : AppCompatActivity() {
     precioProducto: Double,
     idTienda: Int,
   ){
-    arregloProdutos.add(
-      Producto(
-        idProducto,
-        nombreProducto,
-        precioProducto,
-        idTienda
-      )
-    )
-    adaptador.clear()
-    adaptador.addAll(productosFiltrados())
+    val respuesta = TBaseDatos.tablas?.crearProducto(idProducto, nombreProducto, precioProducto, idTienda)
+    if(respuesta == true)  {
+      mostrarSnackbar("Producto ${nombreProducto} creado con éxito")
+      actualizarArreglo()
+    }else{
+      mostrarSnackbar("Tienda Error")
+    }
   }
 
   fun actualizarProducto(
@@ -126,24 +129,23 @@ class ListProducto : AppCompatActivity() {
     nombre: String,
     precio: Double
   ){
-    val productoActual = arregloProdutos.find { it.id == idProducto }
-    if(productoActual?.nombre != nombre){
-      productoActual?.nombre = nombre
+    val respuesta = TBaseDatos.tablas?.actualizarProducto(nombre,precio,idProducto)
+    if(respuesta == true){
+      mostrarSnackbar("Producto actualizado con éxito")
+      actualizarArreglo()
+    }else{
+      mostrarSnackbar("Algo salió mal")
     }
-    if(productoActual?.precio != precio){
-      productoActual?.precio = precio
-    }
-    adaptador.clear()
-    adaptador.addAll(productosFiltrados())
-
   }
 
   fun eliminarProducto(idEliminar: Int){
-    val posicionEliminar = arregloProdutos.indexOfFirst { it.id == idEliminar }
-    mostrarSnackbar("Producto eliminado con éxito")
-    arregloProdutos.removeAt(posicionEliminar)
-    adaptador.clear()
-    adaptador.addAll(productosFiltrados())
+    val respuesta = TBaseDatos.tablas?.eliminarProducto(idEliminar)
+    if(respuesta == true){
+      mostrarSnackbar("Producto eliminado con éxitoooooo")
+      actualizarArreglo()
+    }else{
+      mostrarSnackbar("Algo salió mal")
+    }
   }
   fun abrirActividadconParametros(
     clase: Class<*>
@@ -161,9 +163,9 @@ class ListProducto : AppCompatActivity() {
     clase: Class<*>
   ){
     val intentExplicito = Intent(this,clase)
-    intentExplicito.putExtra("id", productosFiltrados()[posicionItemSeleccionado].id.toString())
-    intentExplicito.putExtra("nombre", productosFiltrados()[posicionItemSeleccionado].nombre)
-    intentExplicito.putExtra("precio", productosFiltrados()[posicionItemSeleccionado].precio.toString())
+    intentExplicito.putExtra("id", arregloProdutos[posicionItemSeleccionado].id.toString())
+    intentExplicito.putExtra("nombre", arregloProdutos[posicionItemSeleccionado].nombre)
+    intentExplicito.putExtra("precio", arregloProdutos[posicionItemSeleccionado].precio.toString())
     intentExplicito.putExtra("nombreTienda", nombreTiendaPertenece)
 
     respuestaProductoActualizado.launch(intentExplicito)
@@ -183,7 +185,7 @@ class ListProducto : AppCompatActivity() {
   }
 
   override fun onContextItemSelected(item: MenuItem): Boolean {
-    val productoSeleccionado = productosFiltrados()[posicionItemSeleccionado]
+    val productoSeleccionado = arregloProdutos[posicionItemSeleccionado]
     return when(item.itemId){
       R.id.m_editar_prod ->{
         abrirActividadItem(EditarProducto::class.java)
