@@ -26,7 +26,8 @@ class GGoogleMapsActivity : AppCompatActivity() {
     solicitarPermisos()
     iniciarLogicaMapa()
     val boton = findViewById<Button>(R.id.btn_ir_carolina)
-      boton.setOnClickListener {
+      boton.
+      setOnClickListener {
         irCarolina() }
   }
 

@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".FRecyclerView">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_entrenadores"
+        android:layout_width="304dp"
+        android:layout_height="411dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/tv_total_likes"
         android:layout_width="wrap_content"
@@ -16,13 +26,5 @@
         app:layout_constraintEnd_toEndOf="@+id/rv_entrenadores"
         app:layout_constraintStart_toStartOf="@+id/rv_entrenadores" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_entrenadores"
-        android:layout_width="301dp"
-        android:layout_height="676dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.725" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

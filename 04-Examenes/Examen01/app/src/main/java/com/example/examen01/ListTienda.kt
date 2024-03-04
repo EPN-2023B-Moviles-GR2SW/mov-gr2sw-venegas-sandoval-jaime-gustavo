@@ -15,11 +15,13 @@ import android.widget.Button
 import android.widget.ListView
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.QueryDocumentSnapshot
+
 
 class ListTienda : AppCompatActivity() {
   private lateinit var arreglo: ArrayList<Tienda>
-
-
   var posicionTiendaSeleccionada = 0
   private lateinit var adaptador: ArrayAdapter<Tienda>
   var idModificado = 0
@@ -38,6 +40,7 @@ class ListTienda : AppCompatActivity() {
           nombreModificado = data?.getStringExtra("nombreModificado") ?: ""
           direccionModificada = data?.getStringExtra("direccionModificada") ?: ""
           anadirTienda(idModificado, nombreModificado, direccionModificada)
+
         }
       }
     }
@@ -172,7 +175,6 @@ class ListTienda : AppCompatActivity() {
       mostrarSnackbar("Algo salió mal")
     }
   }
-
   override fun onCreateContextMenu(
     menu: ContextMenu?,
     v: View?,
@@ -187,7 +189,6 @@ class ListTienda : AppCompatActivity() {
     System.out.println("esta es la posicion que envío")
     System.out.println(posicion)
   }
-
   override fun onContextItemSelected(item: MenuItem): Boolean {
     val tiendaSeleccionada = arreglo[posicionTiendaSeleccionada]
     return when(item.itemId){
